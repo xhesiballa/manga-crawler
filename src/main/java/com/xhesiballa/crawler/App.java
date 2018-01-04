@@ -1,5 +1,7 @@
 package com.xhesiballa.crawler;
 
+import com.xhesiballa.crawler.clients.MangafoxClient;
+
 import java.util.ArrayList;
 
 
@@ -16,7 +18,7 @@ public class App
     public static void main( String[] args )
     {
     	Utils utils = new Utils("Detective Conan", SAVE_LOCATION);
-    	Client client = new Client(utils);
+    	MangafoxClient client = new MangafoxClient(utils);
     	
     	ArrayList<String> urls = client.getChaptersURLs(MANGA_URL);
     	

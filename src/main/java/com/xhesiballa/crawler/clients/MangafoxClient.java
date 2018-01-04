@@ -1,13 +1,17 @@
-package com.xhesiballa.crawler;
+package com.xhesiballa.crawler.clients;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import com.xhesiballa.crawler.Utils;
+import com.xhesiballa.crawler.interfaces.Client;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.jsoup.nodes.Element;
 
-public class Client {
+public class MangafoxClient implements Client {
+
 	private static final  String IMG_SELECTOR = ".read_img>a>img";
 	private static final String CHAPTER_SELECTOR = ".chlist a.tips";
 	private static final String BTN_NEXT_PAGE_SELECTOR = ".btn.next_page";
@@ -16,10 +20,11 @@ public class Client {
 	
 	private Utils utils;
 	
-	public Client(Utils utils){
+	public MangafoxClient(Utils utils){
 		this.utils = utils;
 	}
 	
+	@Override
 	public ArrayList<String> getChaptersURLs(String mangaURL){
 		ArrayList<String> chapterURLs = new ArrayList<>();
 		
@@ -40,6 +45,7 @@ public class Client {
 		return chapterURLs;
 	}
 	
+	@Override
 	public void getChapter(int chapter, String chapterBaseURL){
 		String nextURLToDownload = chapterBaseURL + "/1.html";
 		int pageNumber = 1;
