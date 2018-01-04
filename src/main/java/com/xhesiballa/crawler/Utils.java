@@ -8,18 +8,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Utils {
-	private static final String FILE_EXTENTION = ".jpg";
-	
-	private final String saveLocation;
-	private final String mangaName;
+	private Config config;
 
-	Utils(String mangaName, String saveLocation){
-		this.mangaName = mangaName;
-		this.saveLocation = saveLocation;
+	public Utils(Config config){
+		this.config = config;
 	}
 	
-	public void downloadImage(String url, int chapter, int pageNumber){
-		String path = saveLocation + "/" + mangaName + "/chapter" + 
+	public void downloadImage(String url, String mangaTitle, int chapter, int pageNumber){
+		String saveLocation = config.getSaveLocation();
+		String FILE_EXTENTION = config.getFileExtension();
+
+		String path = saveLocation + "/" + mangaTitle + "/chapter" +
 				Integer.toString(chapter) + "/" + Integer.toString(pageNumber) + FILE_EXTENTION;
 		
     	try(InputStream in = new URL(url).openStream()){

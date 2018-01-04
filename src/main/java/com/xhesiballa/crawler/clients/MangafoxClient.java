@@ -46,7 +46,7 @@ public class MangafoxClient implements Client {
 	}
 	
 	@Override
-	public void getChapter(int chapter, String chapterBaseURL){
+	public void getChapter(String mangaTitle, int chapter, String chapterBaseURL){
 		String nextURLToDownload = chapterBaseURL + "/1.html";
 		int pageNumber = 1;
 		while(true){
@@ -56,7 +56,7 @@ public class MangafoxClient implements Client {
 				document = getPageContent(nextURLToDownload);
 				String imgURL = document.select(IMG_SELECTOR).first().attr("src");
 				
-				utils.downloadImage(imgURL, chapter, pageNumber++);
+				utils.downloadImage(imgURL, mangaTitle, chapter, pageNumber++);
 				
 				nextURLToDownload = getNextPageURL(document);
 				if( nextURLToDownload == null){
