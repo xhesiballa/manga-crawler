@@ -1,12 +1,12 @@
 package com.xhesiballa.crawler;
 
 import com.xhesiballa.crawler.clients.MangafoxClient;
-
 import java.util.ArrayList;
+
 public class App 
 {
 	private static final  String MANGA_URL = "http://mangafox.la/manga/detective_conan/";
-	private static final String SAVE_LOCATION = "C:/Users/user/Desktop";
+	private static final String SAVE_LOCATION = "C:/Users/user/Desktop/";
 	private static final String PROTOCOL = "http:";
 	private static final String FILE_EXTENSION = ".jpg";
 	private static final String MANGA_TITLE = "Detective Conan";

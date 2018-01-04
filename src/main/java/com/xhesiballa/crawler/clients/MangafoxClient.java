@@ -56,7 +56,9 @@ public class MangafoxClient implements Client {
 				document = getPageContent(nextURLToDownload);
 				String imgURL = document.select(IMG_SELECTOR).first().attr("src");
 				
-				utils.downloadImage(imgURL, mangaTitle, chapter, pageNumber++);
+				utils.downloadImage(imgURL,
+						mangaTitle + "/" + Integer.toString(chapter),
+						Integer.toString(pageNumber++));
 				
 				nextURLToDownload = getNextPageURL(document);
 				if( nextURLToDownload == null){

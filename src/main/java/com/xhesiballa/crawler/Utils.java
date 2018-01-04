@@ -14,20 +14,19 @@ public class Utils {
 		this.config = config;
 	}
 	
-	public void downloadImage(String url, String mangaTitle, int chapter, int pageNumber){
+	public void downloadImage(String imageURL, String savePath, String fileName){
 		String saveLocation = config.getSaveLocation();
 		String FILE_EXTENTION = config.getFileExtension();
 
-		String path = saveLocation + "/" + mangaTitle + "/chapter" +
-				Integer.toString(chapter) + "/" + Integer.toString(pageNumber) + FILE_EXTENTION;
+		String fullPath = saveLocation  + savePath + fileName + FILE_EXTENTION;
 		
-    	try(InputStream in = new URL(url).openStream()){
+    	try(InputStream in = new URL(imageURL).openStream()){
 //    		System.out.println("Downloading img:" + url);
-    		if(Files.exists(Paths.get(path))){
-    			Files.delete(Paths.get(path));
+    		if(Files.exists(Paths.get(fullPath))){
+    			Files.delete(Paths.get(fullPath));
     		}
-    		Files.createDirectories(Paths.get(path).getParent());
-    	    Files.copy(in, Paths.get(path));
+    		Files.createDirectories(Paths.get(fullPath).getParent());
+    	    Files.copy(in, Paths.get(fullPath));
 //    	    System.out.println("Saved to:" + path);
     	} catch (MalformedURLException e) {
 			e.printStackTrace();
