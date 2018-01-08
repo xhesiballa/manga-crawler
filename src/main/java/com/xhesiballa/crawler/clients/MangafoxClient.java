@@ -2,6 +2,7 @@ package com.xhesiballa.crawler.clients;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.xhesiballa.crawler.Utils;
 import com.xhesiballa.crawler.interfaces.Client;
@@ -12,8 +13,10 @@ import org.jsoup.nodes.Element;
 
 public class MangafoxClient implements Client {
 
-	private static final String MANGA_URL = "http://mangafox.la/manga/detective_conan/";
+	private static final String MANGA_BASE_URL = "http://mangafox.la/";
+	private static final String MANGA_LIST_URL = MANGA_BASE_URL + "/manga";
 
+	private static final String MANGA_LIST_SELECTOR = "div.manga_list li a.series_preview";
 	private static final String IMG_SELECTOR = ".read_img>a>img";
 	private static final String CHAPTER_SELECTOR = ".chlist a.tips";
 	private static final String BTN_NEXT_PAGE_SELECTOR = ".btn.next_page";
@@ -26,12 +29,34 @@ public class MangafoxClient implements Client {
 		this.utils = utils;
 	}
 
+
 	@Override
-	public ArrayList<String> getChaptersURL(){
+	public ArrayList<String> getManga() {
+		ArrayList<String> mangasURL = new ArrayList<>();
+		try {
+			Document document = getPageContent(MANGA_LIST_URL);
+			Elements mangaList = document.select(MANGA_LIST_SELECTOR);
+
+
+			for ( Element element:mangaList ) {
+				String url = element.attr("href");
+				if( !url.isEmpty() ){
+					mangasURL.add(url);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return mangasURL;
+	}
+
+	@Override
+	public ArrayList<String> getChaptersURL(String mangaURL){
 		ArrayList<String> chapterURLs = new ArrayList<>();
 		
 		try {
-			Document document = getPageContent(MANGA_URL);
+			Document document = getPageContent(mangaURL);
 			Elements chapterLinks = document.select(CHAPTER_SELECTOR);
 			
 			for (Element element : chapterLinks) {
