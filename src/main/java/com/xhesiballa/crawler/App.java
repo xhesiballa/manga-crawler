@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class App 
 {
-	private static final  String MANGA_URL = "http://mangafox.la/manga/detective_conan/";
 	private static final String SAVE_LOCATION = "C:/Users/user/Desktop/";
 	private static final String PROTOCOL = "http:";
 	private static final String FILE_EXTENSION = ".jpg";
@@ -18,7 +17,7 @@ public class App
 
     	MangafoxClient client = new MangafoxClient(utils);
     	
-    	ArrayList<String> urls = client.getChaptersURLs(MANGA_URL);
+    	ArrayList<String> urls = client.getChaptersURL();
     	
     	for(int index=1; index<2; index++){
 			String url = PROTOCOL + urls.get(urls.size()-index);

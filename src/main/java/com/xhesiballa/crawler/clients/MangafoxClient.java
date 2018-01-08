@@ -12,7 +12,9 @@ import org.jsoup.nodes.Element;
 
 public class MangafoxClient implements Client {
 
-	private static final  String IMG_SELECTOR = ".read_img>a>img";
+	private static final String MANGA_URL = "http://mangafox.la/manga/detective_conan/";
+
+	private static final String IMG_SELECTOR = ".read_img>a>img";
 	private static final String CHAPTER_SELECTOR = ".chlist a.tips";
 	private static final String BTN_NEXT_PAGE_SELECTOR = ".btn.next_page";
 	private static final String NEXT_PAGE_ATTR = "onclick";
@@ -23,13 +25,13 @@ public class MangafoxClient implements Client {
 	public MangafoxClient(Utils utils){
 		this.utils = utils;
 	}
-	
+
 	@Override
-	public ArrayList<String> getChaptersURLs(String mangaURL){
+	public ArrayList<String> getChaptersURL(){
 		ArrayList<String> chapterURLs = new ArrayList<>();
 		
 		try {
-			Document document = getPageContent(mangaURL);
+			Document document = getPageContent(MANGA_URL);
 			Elements chapterLinks = document.select(CHAPTER_SELECTOR);
 			
 			for (Element element : chapterLinks) {
@@ -44,7 +46,7 @@ public class MangafoxClient implements Client {
 		
 		return chapterURLs;
 	}
-	
+
 	@Override
 	public void getChapter(String mangaTitle, int chapter, String chapterBaseURL){
 		String nextURLToDownload = chapterBaseURL + "/1.html";
