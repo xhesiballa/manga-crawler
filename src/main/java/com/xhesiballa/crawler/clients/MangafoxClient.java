@@ -27,9 +27,22 @@ public class MangafoxClient implements Client {
 	private static final String NEXT_CHAPTER_METHOD = "next_chapter()";
 	
 	private Utils utils;
+
+	private String providerName = "Manga Fox";
+	private String providerURL = "http://www.http://mangafox.la";
 	
 	public MangafoxClient(Utils utils){
 		this.utils = utils;
+	}
+
+	@Override
+	public String getProviderName() {
+		return providerName;
+	}
+
+	@Override
+	public String getProviderURL() {
+		return providerURL;
 	}
 
 	@Override
