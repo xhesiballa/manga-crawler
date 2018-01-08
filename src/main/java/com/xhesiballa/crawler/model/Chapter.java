@@ -4,6 +4,7 @@ public class Chapter implements Comparable<Chapter>{
 
     private String chapterName;
     private String chapterURL;
+    private Manga manga;
 
     public String getChapterName() {
         return chapterName;
@@ -19,6 +20,14 @@ public class Chapter implements Comparable<Chapter>{
 
     public void setChapterURL(String chapterURL) {
         this.chapterURL = chapterURL;
+    }
+
+    public Manga getManga() {
+        return manga;
+    }
+
+    public void setManga(Manga manga) {
+        this.manga = manga;
     }
 
     @Override

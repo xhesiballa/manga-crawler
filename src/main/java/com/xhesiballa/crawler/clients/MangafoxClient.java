@@ -77,7 +77,8 @@ public class MangafoxClient implements Client {
 					Chapter chapter = new Chapter();
 
 					chapter.setChapterName(chapterName);
-					chapter.setChapterURL(chapterURL);
+					chapter.setChapterURL(PROTOCOL + chapterURL);
+                    chapter.setManga(manga);
 
 					chapterURLs.add(chapter);
 				}
@@ -90,23 +91,28 @@ public class MangafoxClient implements Client {
 	}
 
 	@Override
-	public void getChapter(String mangaTitle, int chapter, String chapterBaseURL){
-		String nextURLToDownload = chapterBaseURL + "/1.html";
+	public void getChapter(Chapter chapter){
+	    String mangaTitle = chapter.getManga().getMangaName();
+	    String chapterName = chapter.getChapterName();
+	    String chapterURL = chapter.getChapterURL();
+	    String chapterBaseURL = chapterURL.substring(0, chapterURL.length() - "/1.html".length());
+
+		String nextURLToDownload = chapterURL;
 		int pageNumber = 1;
 		while(true){
 			Document document;
 			try {
-				System.out.println(nextURLToDownload);
+//				System.out.println(nextURLToDownload);
 				document = getPageContent(nextURLToDownload);
 				String imgURL = document.select(IMG_SELECTOR).first().attr("src");
 				
 				utils.downloadImage(imgURL,
-						mangaTitle + "/" + Integer.toString(chapter),
+						mangaTitle + "/" + chapterName,
 						Integer.toString(pageNumber++));
 				
 				nextURLToDownload = getNextPageURL(document);
 				if( nextURLToDownload == null){
-					System.out.println(String.format("Chapter %d finished downloading!!", chapter));
+					System.out.println(String.format("Chapter %s finished downloading!!", chapter.getChapterName()));
 					return;
 				}
 				

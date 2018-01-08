@@ -10,5 +10,5 @@ public interface Client {
 
     ArrayList<Chapter> getChapters(Manga manga);
 
-    void getChapter(String mangaTitle, int chapter, String chapterBaseURL);
+    void getChapter(Chapter chapter);
 }

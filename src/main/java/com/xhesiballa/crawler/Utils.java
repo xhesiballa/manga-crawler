@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 public class Utils {
 	private Config config;
 
-	public Utils(Config config){
+	Utils(Config config){
 		this.config = config;
 	}
 	
@@ -18,19 +18,21 @@ public class Utils {
 		String saveLocation = config.getSaveLocation();
 		String FILE_EXTENTION = config.getFileExtension();
 
-		String fullPath = saveLocation  + savePath + fileName + FILE_EXTENTION;
+		String fullPath = saveLocation  + savePath + "/" +  fileName + FILE_EXTENTION;
 		
     	try(InputStream in = new URL(imageURL).openStream()){
-//    		System.out.println("Downloading img:" + url);
+//    		System.out.println("Downloading img:" + imageURL);
     		if(Files.exists(Paths.get(fullPath))){
     			Files.delete(Paths.get(fullPath));
     		}
     		Files.createDirectories(Paths.get(fullPath).getParent());
     	    Files.copy(in, Paths.get(fullPath));
-//    	    System.out.println("Saved to:" + path);
+//    	    System.out.println("Saved to:" + fullPath);
     	} catch (MalformedURLException e) {
+    		System.out.println("-----Malformed Exception-----");
 			e.printStackTrace();
 		} catch (IOException e) {
+			System.out.println("-----IO Exception-----");
 			e.printStackTrace();
 		}
     }
