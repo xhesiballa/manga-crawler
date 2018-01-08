@@ -2,10 +2,10 @@ package com.xhesiballa.crawler.clients;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.xhesiballa.crawler.Utils;
 import com.xhesiballa.crawler.interfaces.Client;
+import com.xhesiballa.crawler.model.Chapter;
 import com.xhesiballa.crawler.model.Manga;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,6 +13,8 @@ import org.jsoup.select.Elements;
 import org.jsoup.nodes.Element;
 
 public class MangafoxClient implements Client {
+
+	private static final String PROTOCOL = "http:";
 
 	private static final String MANGA_BASE_URL = "http://mangafox.la/";
 	private static final String MANGA_LIST_URL = MANGA_BASE_URL + "manga";
@@ -30,7 +32,6 @@ public class MangafoxClient implements Client {
 		this.utils = utils;
 	}
 
-
 	@Override
 	public ArrayList<Manga> getManga() {
 		ArrayList<Manga> mangasURL = new ArrayList<>();
@@ -47,7 +48,7 @@ public class MangafoxClient implements Client {
 					Manga manga = new Manga();
 
 					manga.setMangaName(name);
-					manga.setMangaURL(url);
+					manga.setMangaURL(PROTOCOL + url);
 
 					mangasURL.add(manga);
 				}
@@ -60,17 +61,25 @@ public class MangafoxClient implements Client {
 	}
 
 	@Override
-	public ArrayList<String> getChaptersURL(String mangaURL){
-		ArrayList<String> chapterURLs = new ArrayList<>();
+	public ArrayList<Chapter> getChapters(Manga manga){
+		ArrayList<Chapter> chapterURLs = new ArrayList<>();
 		
 		try {
-			Document document = getPageContent(mangaURL);
+			Document document = getPageContent(manga.getMangaURL());
 			Elements chapterLinks = document.select(CHAPTER_SELECTOR);
 			
 			for (Element element : chapterLinks) {
-				String url = element.attr("href");
-				if( !url.isEmpty() ){
-					chapterURLs.add(url);
+
+				String chapterName = element.text();
+				String chapterURL = element.attr("href");
+
+				if( !chapterURL.isEmpty() ){
+					Chapter chapter = new Chapter();
+
+					chapter.setChapterName(chapterName);
+					chapter.setChapterURL(chapterURL);
+
+					chapterURLs.add(chapter);
 				}
 			}
 		} catch (IOException e) {

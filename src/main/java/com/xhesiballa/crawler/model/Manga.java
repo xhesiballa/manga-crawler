@@ -1,9 +1,12 @@
 package com.xhesiballa.crawler.model;
 
+import java.util.Set;
+
 public class Manga implements Comparable<Manga>{
 
     private String mangaName;
     private String mangaURL;
+    private Set<Chapter> chapters;
 
     public String getMangaName() {
         return mangaName;
@@ -19,6 +22,14 @@ public class Manga implements Comparable<Manga>{
 
     public void setMangaURL(String mangaURL) {
         this.mangaURL = mangaURL;
+    }
+
+    public Set<Chapter> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(Set<Chapter> chapters) {
+        this.chapters = chapters;
     }
 
     @Override

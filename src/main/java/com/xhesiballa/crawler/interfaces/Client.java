@@ -1,5 +1,6 @@
 package com.xhesiballa.crawler.interfaces;
 
+import com.xhesiballa.crawler.model.Chapter;
 import com.xhesiballa.crawler.model.Manga;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 public interface Client {
     ArrayList<Manga> getManga();
 
-    ArrayList<String> getChaptersURL(String mangaURL);
+    ArrayList<Chapter> getChapters(Manga manga);
 
     void getChapter(String mangaTitle, int chapter, String chapterBaseURL);
 }
