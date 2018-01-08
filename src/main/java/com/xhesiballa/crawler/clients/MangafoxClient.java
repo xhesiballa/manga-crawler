@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.xhesiballa.crawler.Utils;
 import com.xhesiballa.crawler.interfaces.Client;
+import com.xhesiballa.crawler.model.Manga;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -14,7 +15,7 @@ import org.jsoup.nodes.Element;
 public class MangafoxClient implements Client {
 
 	private static final String MANGA_BASE_URL = "http://mangafox.la/";
-	private static final String MANGA_LIST_URL = MANGA_BASE_URL + "/manga";
+	private static final String MANGA_LIST_URL = MANGA_BASE_URL + "manga";
 
 	private static final String MANGA_LIST_SELECTOR = "div.manga_list li a.series_preview";
 	private static final String IMG_SELECTOR = ".read_img>a>img";
@@ -31,17 +32,24 @@ public class MangafoxClient implements Client {
 
 
 	@Override
-	public ArrayList<String> getManga() {
-		ArrayList<String> mangasURL = new ArrayList<>();
+	public ArrayList<Manga> getManga() {
+		ArrayList<Manga> mangasURL = new ArrayList<>();
 		try {
 			Document document = getPageContent(MANGA_LIST_URL);
 			Elements mangaList = document.select(MANGA_LIST_SELECTOR);
 
 
 			for ( Element element:mangaList ) {
+				String name = element.text();
 				String url = element.attr("href");
+
 				if( !url.isEmpty() ){
-					mangasURL.add(url);
+					Manga manga = new Manga();
+
+					manga.setMangaName(name);
+					manga.setMangaURL(url);
+
+					mangasURL.add(manga);
 				}
 			}
 		} catch (IOException e) {

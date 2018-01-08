@@ -1,9 +1,11 @@
 package com.xhesiballa.crawler.interfaces;
 
+import com.xhesiballa.crawler.model.Manga;
+
 import java.util.ArrayList;
 
 public interface Client {
-    ArrayList<String> getManga();
+    ArrayList<Manga> getManga();
 
     ArrayList<String> getChaptersURL(String mangaURL);
 
