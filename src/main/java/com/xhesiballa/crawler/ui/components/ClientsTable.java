@@ -1,0 +1,36 @@
+package com.xhesiballa.crawler.ui.components;
+
+import com.xhesiballa.crawler.interfaces.Client;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.util.List;
+
+public class ClientsTable extends TableView {
+
+    public ClientsTable(List<Client> clientList){
+        TableColumn<Client, String> nameCol = new TableColumn<>("Name");
+        nameCol.setCellValueFactory(
+                new PropertyValueFactory<>("providerName"));
+
+        TableColumn<Client, String> addressCol = new TableColumn<>("Address");
+        addressCol.setCellValueFactory(
+                new PropertyValueFactory<>("providerURL"));
+
+        getColumns().addAll(nameCol, addressCol);
+
+        ObservableList<Client> clientsObservableList = FXCollections.observableArrayList(clientList);
+
+        setItems(clientsObservableList);
+
+        getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                Client client = (Client) newSelection;
+                System.out.println(client.getProviderName());
+            }
+        });
+    }
+}

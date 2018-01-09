@@ -29,7 +29,7 @@ public class MangafoxClient implements Client {
 	private Utils utils;
 
 	private String providerName = "Manga Fox";
-	private String providerURL = "http://www.http://mangafox.la";
+	private String providerURL = "www.http://mangafox.la";
 	
 	public MangafoxClient(Utils utils){
 		this.utils = utils;
