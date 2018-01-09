@@ -1,12 +1,12 @@
 package com.xhesiballa.crawler.ui.components;
 
 import com.xhesiballa.crawler.interfaces.Client;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-
 import java.util.List;
 
 public class ClientsTable extends TableView {
@@ -25,12 +25,9 @@ public class ClientsTable extends TableView {
         ObservableList<Client> clientsObservableList = FXCollections.observableArrayList(clientList);
 
         setItems(clientsObservableList);
+    }
 
-        getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                Client client = (Client) newSelection;
-                System.out.println(client.getProviderName());
-            }
-        });
+    public void setRowSelectListener(ChangeListener listener){
+        getSelectionModel().selectedItemProperty().addListener(listener);
     }
 }
