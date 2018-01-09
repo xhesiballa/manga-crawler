@@ -3,12 +3,12 @@ package com.xhesiballa.crawler;
 import com.xhesiballa.crawler.interfaces.Client;
 import com.xhesiballa.crawler.model.Chapter;
 import com.xhesiballa.crawler.model.Manga;
+import com.xhesiballa.crawler.ui.components.ChaptersTable;
 import com.xhesiballa.crawler.ui.components.ClientsTable;
 import com.xhesiballa.crawler.ui.components.MangaTable;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -25,6 +25,8 @@ public class App extends Application
 	private static ClientFactory clientFactory;
 
     MangaTable mangaTable;
+    ChaptersTable chaptersTable;
+    Client selectedClient;
 	
     public static void main( String[] args )
     {
@@ -40,16 +42,23 @@ public class App extends Application
 
 		StackPane root = new StackPane();
 		GridPane grid = new GridPane();
+
+		ColumnConstraints c1 = new ColumnConstraints();
+		c1.setPercentWidth(50);
+		ColumnConstraints c2 = new ColumnConstraints();
+		c2.setPercentWidth(50);
+
+		grid.getColumnConstraints().addAll(c1, c2);
 		root.getChildren().add(grid);
 
 		ClientsTable clientsTable = new ClientsTable(clientFactory.getRegisteredClients());
 		clientsTable.setRowSelectListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 Client client = (Client) newSelection;
+				selectedClient = client;
                 List<Manga> manga = client.getManga();
 
                 mangaTable.listMangas(manga);
-                System.out.println(client.getProviderName());
             }
         });
 
@@ -58,8 +67,18 @@ public class App extends Application
         mangaTable = new MangaTable();
         grid.add(mangaTable, 0, 1);
 
+		mangaTable.setRowSelectListener((obs, oldSelection, newSelection) -> {
+			if (newSelection != null) {
+				Manga manga = (Manga) newSelection;
+				List<Chapter> chapters = selectedClient.getChapters(manga);
+				chaptersTable.listChapters(chapters);
+			}
+		});
 
-		Scene scene = new Scene(root, 500, 250);
+		chaptersTable = new ChaptersTable();
+		grid.add(chaptersTable, 1, 0, 1, 2);
+
+		Scene scene = new Scene(root, 750, 500);
 
 		primaryStage.setTitle("Manga Crawler!");
 		primaryStage.setScene(scene);

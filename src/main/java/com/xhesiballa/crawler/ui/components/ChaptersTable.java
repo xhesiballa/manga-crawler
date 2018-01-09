@@ -1,9 +1,7 @@
 package com.xhesiballa.crawler.ui.components;
 
-import com.xhesiballa.crawler.interfaces.Client;
-import com.xhesiballa.crawler.model.Manga;
+import com.xhesiballa.crawler.model.Chapter;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -12,18 +10,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
 
-public class MangaTable extends TableView {
-
-    public MangaTable() {
+public class ChaptersTable extends TableView {
+    public ChaptersTable() {
         super();
 
-        TableColumn<Manga, String> nameCol = new TableColumn<>("Name");
+        TableColumn<Chapter, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(
-                new PropertyValueFactory<>("mangaName"));
+                new PropertyValueFactory<>("chapterName"));
 
         nameCol.prefWidthProperty().bind(widthProperty().multiply(0.9));
 
-        TableColumn<Manga, Number> indexColumn = new TableColumn<>("#");
+        TableColumn<Chapter, Number> indexColumn = new TableColumn<>("#");
         indexColumn.setSortable(false);
         indexColumn.setCellValueFactory(column-> new ReadOnlyObjectWrapper<>(getItems().indexOf(column.getValue()) + 1));
         indexColumn.prefWidthProperty().bind(widthProperty().multiply(0.1));
@@ -31,12 +28,8 @@ public class MangaTable extends TableView {
         getColumns().addAll(indexColumn, nameCol);
     }
 
-    public void listMangas(List<Manga> mangas){
-        ObservableList<Manga> mangaObservableList = FXCollections.observableArrayList(mangas);
-        setItems(mangaObservableList);
-    }
-
-    public void setRowSelectListener(ChangeListener listener){
-        getSelectionModel().selectedItemProperty().addListener(listener);
+    public void listChapters(List<Chapter> chapters){
+        ObservableList<Chapter> chaptersObservableList = FXCollections.observableArrayList(chapters);
+        setItems(chaptersObservableList);
     }
 }

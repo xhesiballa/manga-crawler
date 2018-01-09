@@ -15,10 +15,12 @@ public class ClientsTable extends TableView {
         TableColumn<Client, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(
                 new PropertyValueFactory<>("providerName"));
+        nameCol.prefWidthProperty().bind(widthProperty().multiply(0.25));
 
         TableColumn<Client, String> addressCol = new TableColumn<>("Address");
         addressCol.setCellValueFactory(
                 new PropertyValueFactory<>("providerURL"));
+        addressCol.prefWidthProperty().bind(widthProperty().multiply(0.75));
 
         getColumns().addAll(nameCol, addressCol);
 
