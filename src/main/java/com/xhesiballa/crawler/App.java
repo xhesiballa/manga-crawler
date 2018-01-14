@@ -81,6 +81,13 @@ public class App extends Application
 		chaptersTable = new ChaptersTable();
 		grid.add(chaptersTable, 1, 0, 1, 2);
 
+		chaptersTable.setOnMouseClicked((event) -> {
+			if (event.getClickCount() == 2) {
+				Chapter selectedChapter = (Chapter) chaptersTable.getSelectionModel().getSelectedItem();
+				selectedClient.getChapter(selectedChapter);
+			}
+		});
+
 		Scene scene = new Scene(root, 750, 500);
 
 		primaryStage.setTitle("Manga Crawler!");
