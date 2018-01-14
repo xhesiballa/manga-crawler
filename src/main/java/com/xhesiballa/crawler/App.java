@@ -7,12 +7,14 @@ import com.xhesiballa.crawler.ui.components.ChaptersTable;
 import com.xhesiballa.crawler.ui.components.ClientsTable;
 import com.xhesiballa.crawler.ui.components.MangaTable;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 
@@ -52,24 +54,25 @@ public class App extends Application
 		root.getChildren().add(grid);
 
 		ClientsTable clientsTable = new ClientsTable(clientFactory.getRegisteredClients());
-		clientsTable.setRowSelectListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                Client client = (Client) newSelection;
+
+		clientsTable.setOnMouseClicked((event) -> {
+			if (event.getClickCount() == 2) {
+				Client client = (Client) clientsTable.getSelectionModel().getSelectedItem();
 				selectedClient = client;
                 List<Manga> manga = client.getManga();
 
                 mangaTable.listMangas(manga);
-            }
-        });
+			}
+		});
 
 		grid.add(clientsTable, 0, 0);
 
         mangaTable = new MangaTable();
         grid.add(mangaTable, 0, 1);
 
-		mangaTable.setRowSelectListener((obs, oldSelection, newSelection) -> {
-			if (newSelection != null) {
-				Manga manga = (Manga) newSelection;
+		mangaTable.setOnMouseClicked((event) -> {
+			if (event.getClickCount() == 2) {
+				Manga manga = (Manga)  mangaTable.getSelectionModel().getSelectedItem();
 				List<Chapter> chapters = selectedClient.getChapters(manga);
 				chaptersTable.listChapters(chapters);
 			}
