@@ -1,10 +1,11 @@
 package com.xhesiballa.crawler.model;
 
-public class Chapter implements Comparable<Chapter>{
+public class Chapter implements Comparable<Chapter> {
 
     private String chapterName;
     private String chapterURL;
     private Manga manga;
+    private int pageCount;
 
     public String getChapterName() {
         return chapterName;
@@ -28,6 +29,14 @@ public class Chapter implements Comparable<Chapter>{
 
     public void setManga(Manga manga) {
         this.manga = manga;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
     }
 
     @Override

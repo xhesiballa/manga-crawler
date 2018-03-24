@@ -7,9 +7,11 @@ import com.xhesiballa.crawler.ui.components.ChaptersTable;
 import com.xhesiballa.crawler.ui.components.ClientsTable;
 import com.xhesiballa.crawler.ui.components.MangaTable;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
@@ -17,6 +19,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class App extends Application {
     private static final String SAVE_LOCATION = "C:/Users/user/Desktop/";
@@ -27,6 +30,11 @@ public class App extends Application {
     private final DirectoryChooser directoryChooser = new DirectoryChooser();
     private static File saveDirectory = new File(SAVE_LOCATION);
     private final Thread thread = new Thread();
+
+    private final ProgressBar progressBar = new ProgressBar();
+    {
+        progressBar.setVisible(false);
+    }
 
     MangaTable mangaTable;
     ChaptersTable chaptersTable;
@@ -89,10 +97,26 @@ public class App extends Application {
 
         chaptersTable.setOnMouseClicked((event) -> {
             if (event.getClickCount() == 2) {
+                Consumer<Double> myConsumer = progress -> {
+                    if(progress!=-1){
+                        Platform.runLater(() -> {
+                            progressBar.setProgress(progress);
+                        });
+                    }
+                    if(progress == 1){
+                        Platform.runLater(() -> {
+                            progressBar.setVisible(false);
+                        });
+                    }
+                };
+
+                progressBar.setProgress(0);
+                progressBar.setVisible(true);
                 new Thread(() -> {
                     Chapter selectedChapter = (Chapter) chaptersTable.getSelectionModel().getSelectedItem();
-                    selectedClient.getChapter(selectedChapter);
+                    selectedClient.getChapter(selectedChapter, myConsumer);
                 }).start();
+//                progressBar.setVisible(false);
             }
         });
 
@@ -118,6 +142,7 @@ public class App extends Application {
         hBox.setSpacing(10);
 
         grid.add(hBox, 0, 2);
+        grid.add(progressBar, 1, 2);
 
         Scene scene = new Scene(root, 750, 500);
 
@@ -125,5 +150,7 @@ public class App extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+
 }
  
