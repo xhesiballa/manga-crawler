@@ -16,4 +16,8 @@ public class Config {
     public String getSaveLocation() {
         return saveLocation;
     }
+
+    public void setSaveLocation(String saveLocation) {
+        this.saveLocation = saveLocation;
+    }
 }

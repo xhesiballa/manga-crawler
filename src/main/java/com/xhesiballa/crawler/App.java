@@ -7,16 +7,16 @@ import com.xhesiballa.crawler.ui.components.ChaptersTable;
 import com.xhesiballa.crawler.ui.components.ClientsTable;
 import com.xhesiballa.crawler.ui.components.MangaTable;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.List;
-
 
 public class App extends Application
 {
@@ -25,6 +25,8 @@ public class App extends Application
 
 	private static Config config;
 	private static ClientFactory clientFactory;
+	final DirectoryChooser directoryChooser = new DirectoryChooser();
+	private static File saveDirectory = new File(SAVE_LOCATION);
 
     MangaTable mangaTable;
     ChaptersTable chaptersTable;
@@ -87,6 +89,29 @@ public class App extends Application
 				selectedClient.getChapter(selectedChapter);
 			}
 		});
+
+		Label label = new Label("Save Location:");
+		TextField saveLocationTextBox = new TextField ();
+		saveLocationTextBox.setText(config.getSaveLocation());
+		saveLocationTextBox.setDisable(true);
+
+		Button changeSaveDirectoryButton = new Button();
+		changeSaveDirectoryButton.setText("Change");
+		changeSaveDirectoryButton.setOnMouseClicked(event -> {
+			directoryChooser.setInitialDirectory(saveDirectory);
+			File selectedDirectory = directoryChooser.showDialog(primaryStage);
+			if(selectedDirectory != null){
+				saveDirectory = selectedDirectory;
+				String newSaveLocation = selectedDirectory.getAbsolutePath() + "/";
+				config.setSaveLocation(newSaveLocation);
+				saveLocationTextBox.setText(newSaveLocation);
+			}
+		});
+		HBox hBox = new HBox();
+		hBox.getChildren().addAll(label, saveLocationTextBox, changeSaveDirectoryButton);
+		hBox.setSpacing(10);
+
+		grid.add(hBox, 0, 2);
 
 		Scene scene = new Scene(root, 750, 500);
 
