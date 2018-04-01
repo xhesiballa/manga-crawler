@@ -32,7 +32,6 @@ public class App extends Application {
     private static ClientFactory clientFactory;
     private final DirectoryChooser directoryChooser = new DirectoryChooser();
     private static File saveDirectory = new File(SAVE_LOCATION);
-    private final Thread thread = new Thread();
 
     private final ProgressBar progressBar = new ProgressBar();
 
@@ -69,23 +68,14 @@ public class App extends Application {
 
         //Clients table
         ClientsTable clientsTable = new ClientsTable(clientFactory.getRegisteredClients());
-
-        clientsTable.setOnMouseClicked((event) -> {
-            if (event.getClickCount() == 2) {
-                Thread newThread = new Thread(() -> {
-                    Client client = (Client) clientsTable.getSelectionModel().getSelectedItem();
-                    selectedClient = client;
-                    List<Manga> manga = client.getManga();
-
-                    mangaTable.listMangas(manga);
-                    Platform.runLater(() -> {
-                        searchTextField.setDisable(false);
-                    });
-                });
-                newThread.start();
-            }
+        clientsTable.setOnSelectedClientChange(c -> {
+            selectedClient = c;
+            List<Manga> manga = selectedClient.getManga();
+            mangaTable.listMangas(manga);
+            Platform.runLater(() ->
+                    searchTextField.setDisable(false)
+            );
         });
-
         grid.add(clientsTable, 0, 0);
 
         //Search box
@@ -98,33 +88,22 @@ public class App extends Application {
         searchTextField.setDisable(true);
         searchTextField.addEventHandler(KeyEvent.KEY_RELEASED, (event -> {
             String searchText = ((TextField) event.getSource()).getText();
-            mangaTable.setFilterCriteria(manga -> {
-                if (searchText == null || searchText.isEmpty()) {
-                    return true;
-                }
-
-                return manga.getMangaName().toLowerCase().startsWith(searchText.toLowerCase());
-            });
+            mangaTable.setFilterCriteria(manga ->
+                    searchText == null || searchText.isEmpty() || manga.getMangaName().toLowerCase()
+                            .startsWith(searchText.toLowerCase())
+            );
         }));
 
         searchMangaHBox.getChildren().addAll(searchLabel, searchTextField);
-
         grid.add(searchMangaHBox, 0, 1);
-
 
         //manga table
         mangaTable = new MangaTable();
-        grid.add(mangaTable, 0, 2);
-
-        mangaTable.setOnMouseClicked((event) -> {
-            if (event.getClickCount() == 2) {
-                new Thread(() -> {
-                    Manga manga = (Manga) mangaTable.getSelectionModel().getSelectedItem();
-                    List<Chapter> chapters = selectedClient.getChapters(manga);
-                    chaptersTable.listChapters(chapters);
-                }).start();
-            }
+        mangaTable.setOnSelectedMangaChange(m -> {
+            List<Chapter> chapters = selectedClient.getChapters(m);
+            chaptersTable.listChapters(chapters);
         });
+        grid.add(mangaTable, 0, 2);
 
         //Chapters table
         chaptersTable = new ChaptersTable();
