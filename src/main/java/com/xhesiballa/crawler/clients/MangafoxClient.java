@@ -3,13 +3,11 @@ package com.xhesiballa.crawler.clients;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import com.xhesiballa.crawler.Utils;
 import com.xhesiballa.crawler.interfaces.Client;
 import com.xhesiballa.crawler.model.Chapter;
 import com.xhesiballa.crawler.model.Manga;
-import javafx.scene.control.ProgressBar;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -18,8 +16,10 @@ import org.jsoup.nodes.Element;
 public class MangafoxClient implements Client {
 
     private static final String PROTOCOL = "http:";
+    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+            "(KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36";
 
-    private static final String MANGA_BASE_URL = "http://mangafox.la/";
+    private static final String MANGA_BASE_URL = "http://fanfox.net/";
     private static final String MANGA_LIST_URL = MANGA_BASE_URL + "manga";
 
     private static final String MANGA_LIST_SELECTOR = "div.manga_list li a.series_preview";
@@ -33,7 +33,7 @@ public class MangafoxClient implements Client {
     private Utils utils;
 
     private String providerName = "Manga Fox";
-    private String providerURL = "www.http://mangafox.la";
+    private String providerURL = "http://fanfox.net";
 
     public MangafoxClient(Utils utils) {
         this.utils = utils;
@@ -61,14 +61,12 @@ public class MangafoxClient implements Client {
                 String name = element.text();
                 String url = element.attr("href");
 
-                if (!url.isEmpty()) {
-                    Manga manga = new Manga();
+                Manga manga = new Manga();
 
-                    manga.setMangaName(name);
-                    manga.setMangaURL(PROTOCOL + url);
+                manga.setMangaName(name);
+                manga.setMangaURL(PROTOCOL + url);
 
-                    mangasURL.add(manga);
-                }
+                mangasURL.add(manga);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -137,18 +135,18 @@ public class MangafoxClient implements Client {
                 nextURLToDownload = getNextPageURL(document);
                 if (nextURLToDownload == null) {
                     System.out.println(String.format("Chapter %s finished downloading!!", chapter.getChapterName()));
-                    setProgress.accept(new Double(1));
+                    setProgress.accept(1D);
                     return;
                 }
 
                 nextURLToDownload = chapterBaseURL + "/" + nextURLToDownload;
             } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 if (pageCount != -1) {
-                    setProgress.accept(new Double((double)pageNumber / pageCount));
-                } else{
-                    setProgress.accept(new Double(-1));
+                    setProgress.accept(((double) pageNumber / pageCount));
+                } else {
+                    setProgress.accept(-1D);
                 }
                 pageNumber++;
             }
@@ -156,7 +154,12 @@ public class MangafoxClient implements Client {
     }
 
     private Document getPageContent(String pageURL) throws IOException {
-        return Jsoup.connect(pageURL).get();
+        return Jsoup.connect(pageURL)
+                .userAgent(USER_AGENT)
+                .header("Accept-Encoding", "gzip, deflate")
+                .maxBodySize(0)
+                .timeout(600000)
+                .get();
     }
 
     private String getNextPageURL(Document document) {
