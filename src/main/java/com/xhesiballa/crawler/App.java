@@ -59,7 +59,7 @@ public class App extends Application {
         try {
             CodeSource codeSource = App.class.getProtectionDomain().getCodeSource();
             saveDirectory = new File(codeSource.getLocation().toURI().getPath()).getParentFile();
-            config.setSaveLocation(saveDirectory.getAbsolutePath());
+            config.setSaveLocation(saveDirectory.getAbsolutePath() + "\\");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
