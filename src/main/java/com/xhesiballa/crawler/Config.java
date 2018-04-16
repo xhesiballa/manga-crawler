@@ -4,13 +4,15 @@ public class Config {
     private String saveLocation;
     private String fileExtension;
 
-    public Config(String saveLocation, String fileExtension) {
-        this.saveLocation = saveLocation;
-        this.fileExtension = fileExtension;
+    public Config() {
     }
 
     public String getFileExtension() {
         return fileExtension;
+    }
+
+    public void setFileExtension(String fileExtension) {
+        this.fileExtension = fileExtension;
     }
 
     public String getSaveLocation() {

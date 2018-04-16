@@ -20,18 +20,19 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class App extends Application {
-    private static final String SAVE_LOCATION = "C:/Users/xhesi/Desktop/";
     private static final String FILE_EXTENSION = ".jpg";
     private static final String SEARCH_STRING = "Search";
 
     private static Config config;
     private static ClientFactory clientFactory;
     private final DirectoryChooser directoryChooser = new DirectoryChooser();
-    private static File saveDirectory = new File(SAVE_LOCATION);
+    private static File saveDirectory;
 
     private final ProgressBar progressBar = new ProgressBar();
 
@@ -45,7 +46,8 @@ public class App extends Application {
     private TextField searchTextField;
 
     public static void main(String[] args) {
-        config = new Config(SAVE_LOCATION, FILE_EXTENSION);
+        config = new Config();
+        config.setFileExtension(FILE_EXTENSION);
         Utils utils = new Utils(config);
         clientFactory = new ClientFactory(utils);
 
@@ -54,6 +56,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        try {
+            CodeSource codeSource = App.class.getProtectionDomain().getCodeSource();
+            saveDirectory = new File(codeSource.getLocation().toURI().getPath()).getParentFile();
+            config.setSaveLocation(saveDirectory.getAbsolutePath());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
         StackPane root = new StackPane();
         GridPane grid = new GridPane();
@@ -113,14 +122,10 @@ public class App extends Application {
             if (event.getClickCount() == 2) {
                 Consumer<Double> myConsumer = progress -> {
                     if (progress != -1) {
-                        Platform.runLater(() -> {
-                            progressBar.setProgress(progress);
-                        });
+                        Platform.runLater(() -> progressBar.setProgress(progress));
                     }
                     if (progress == 1) {
-                        Platform.runLater(() -> {
-                            progressBar.setVisible(false);
-                        });
+                        Platform.runLater(() -> progressBar.setVisible(false));
                     }
                 };
 
@@ -142,16 +147,7 @@ public class App extends Application {
 
         Button changeSaveDirectoryButton = new Button();
         changeSaveDirectoryButton.setText("Change");
-        changeSaveDirectoryButton.setOnMouseClicked(event -> {
-            directoryChooser.setInitialDirectory(saveDirectory);
-            File selectedDirectory = directoryChooser.showDialog(primaryStage);
-            if (selectedDirectory != null) {
-                saveDirectory = selectedDirectory;
-                String newSaveLocation = selectedDirectory.getAbsolutePath() + "/";
-                config.setSaveLocation(newSaveLocation);
-                saveLocationTextBox.setText(newSaveLocation);
-            }
-        });
+        changeSaveDirectoryButton.setOnMouseClicked(event -> promptDownloadLocation(primaryStage, saveLocationTextBox));
         HBox hBox = new HBox();
         hBox.getChildren().addAll(label, saveLocationTextBox, changeSaveDirectoryButton);
         hBox.setSpacing(10);
@@ -167,6 +163,17 @@ public class App extends Application {
         primaryStage.show();
     }
 
-
+    private void promptDownloadLocation(Stage primaryStage, TextField saveLocationTextBox) {
+        if (saveDirectory != null) {
+            directoryChooser.setInitialDirectory(saveDirectory);
+        }
+        File selectedDirectory = directoryChooser.showDialog(primaryStage);
+        if (selectedDirectory != null) {
+            saveDirectory = selectedDirectory;
+            String newSaveLocation = selectedDirectory.getAbsolutePath() + "\\";
+            config.setSaveLocation(newSaveLocation);
+            saveLocationTextBox.setText(newSaveLocation);
+        }
+    }
 }
  
