@@ -1,5 +1,6 @@
 package com.xhesiballa.crawler;
 
+import com.xhesiballa.crawler.clients.MangaReader;
 import com.xhesiballa.crawler.clients.MangafoxClient;
 import com.xhesiballa.crawler.interfaces.Client;
 
@@ -16,6 +17,7 @@ public class ClientFactory {
 
         registeredClients = new ArrayList<>();
         registeredClients.add(new MangafoxClient(utils));
+        registeredClients.add(new MangaReader(utils));
     }
 
     public List<Client> getRegisteredClients() {
