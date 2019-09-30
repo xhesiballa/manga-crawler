@@ -4,6 +4,7 @@ import com.xhesiballa.crawler.model.Chapter;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,6 +27,8 @@ public class ChaptersTable extends TableView {
         indexColumn.prefWidthProperty().bind(widthProperty().multiply(0.1));
 
         getColumns().addAll(indexColumn, nameCol);
+
+        getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     public void listChapters(List<Chapter> chapters){

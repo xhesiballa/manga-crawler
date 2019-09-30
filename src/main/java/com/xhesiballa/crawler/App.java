@@ -8,6 +8,7 @@ import com.xhesiballa.crawler.ui.components.ClientsTable;
 import com.xhesiballa.crawler.ui.components.MangaTable;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,12 +16,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
 import java.security.CodeSource;
 import java.util.List;
 import java.util.function.Consumer;
@@ -59,7 +64,7 @@ public class App extends Application {
         try {
             CodeSource codeSource = App.class.getProtectionDomain().getCodeSource();
             saveDirectory = new File(codeSource.getLocation().toURI().getPath()).getParentFile();
-            config.setSaveLocation(saveDirectory.getAbsolutePath() + "\\");
+            config.setSaveLocation(saveDirectory.getAbsolutePath() + FileSystems.getDefault().getSeparator());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -120,22 +125,8 @@ public class App extends Application {
 
         chaptersTable.setOnMouseClicked((event) -> {
             if (event.getClickCount() == 2) {
-                Consumer<Double> myConsumer = progress -> {
-                    if (progress != -1) {
-                        Platform.runLater(() -> progressBar.setProgress(progress));
-                    }
-                    if (progress == 1) {
-                        Platform.runLater(() -> progressBar.setVisible(false));
-                    }
-                };
-
-                progressBar.setProgress(0);
-                progressBar.setVisible(true);
-                new Thread(() -> {
-                    Chapter selectedChapter = (Chapter) chaptersTable.getSelectionModel().getSelectedItem();
-                    selectedClient.getChapter(selectedChapter, myConsumer);
-                }).start();
-//                progressBar.setVisible(false);
+                Chapter selectedChapter = (Chapter) chaptersTable.getSelectionModel().getSelectedItem();
+                downloadChapter(selectedChapter);
             }
         });
 
@@ -148,13 +139,21 @@ public class App extends Application {
         Button changeSaveDirectoryButton = new Button();
         changeSaveDirectoryButton.setText("Change");
         changeSaveDirectoryButton.setOnMouseClicked(event -> promptDownloadLocation(primaryStage, saveLocationTextBox));
+
+        grid.add(progressBar, 1, 3);
+
+        Button downloadButton = new Button();
+        downloadButton.setText("Download");
+        downloadButton.setOnMouseClicked(event -> {
+            ObservableList selectedChapters = chaptersTable.getSelectionModel().getSelectedItems();
+            selectedChapters.forEach(selection ->
+                    downloadChapter((Chapter) selection));
+        });
         HBox hBox = new HBox();
-        hBox.getChildren().addAll(label, saveLocationTextBox, changeSaveDirectoryButton);
+        hBox.getChildren().addAll(label, saveLocationTextBox, changeSaveDirectoryButton, downloadButton);
         hBox.setSpacing(10);
         hBox.setAlignment(Pos.CENTER_LEFT);
-
         grid.add(hBox, 0, 3);
-        grid.add(progressBar, 1, 3);
 
         Scene scene = new Scene(root, 750, 500);
 
@@ -170,10 +169,28 @@ public class App extends Application {
         File selectedDirectory = directoryChooser.showDialog(primaryStage);
         if (selectedDirectory != null) {
             saveDirectory = selectedDirectory;
-            String newSaveLocation = selectedDirectory.getAbsolutePath() + "\\";
+            String newSaveLocation = selectedDirectory.getAbsolutePath() + FileSystems.getDefault().getSeparator();
             config.setSaveLocation(newSaveLocation);
             saveLocationTextBox.setText(newSaveLocation);
         }
+    }
+
+    private void downloadChapter(Chapter selectedChapter) {
+        Consumer<Double> myConsumer = progress -> {
+            if (progress != -1) {
+                Platform.runLater(() -> progressBar.setProgress(progress));
+            }
+            if (progress == 1) {
+                Platform.runLater(() -> progressBar.setVisible(false));
+            }
+        };
+
+        progressBar.setProgress(0);
+        progressBar.setVisible(true);
+        new Thread(() -> {
+            selectedClient.getChapter(selectedChapter, myConsumer);
+        }).start();
+//                progressBar.setVisible(false);
     }
 }
  
