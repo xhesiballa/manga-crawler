@@ -19,9 +19,9 @@ public class MangaReader implements Client {
 
     private String listURL = providerURL + "/alphabetical";
 
-    private String mangaSelector = "ul.series_alpha li a";
-    private String chapterSelector = "#listing tbody td a";
-    private final String imgSelector = "#img";
+    private String mangaSelector = "ul.d46 li a";
+    private String chapterSelector = "table.d48 tbody td a";
+    private final String imgSelector = "#ci";
 
     public MangaReader(Utils utils) {
         this.utils = utils;
@@ -91,20 +91,32 @@ public class MangaReader implements Client {
         Document document = null;
         try {
             document = getPageContent(nextURLToDownload);
-            int pageCount = getPageCount(document);
-            for (int pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
+//            int pageCount = getPageCount(document);
+            int pageNumber = 1;
+            setProgress.accept(-1D);
+            String prevURL = null;
+            while (true) {
                 nextURLToDownload = chapterURL + "/" + pageNumber;
                 document = getPageContent(nextURLToDownload);
-                String imgURL = document.select(imgSelector).first().attr("src");
+                if(document == null){
+                    break;
+                }
+                String imgURL = "https:" + document.select(imgSelector).first().attr("src");
+                if(imgURL.equals(prevURL)){
+                    break;
+                }
+                prevURL = imgURL;
                 utils.downloadImage(imgURL,
                         mangaTitle + "/" + chapterName,
                         Integer.toString(pageNumber));
-                setProgress.accept(((double) pageNumber / pageCount));
+                pageNumber++;
+//                setProgress.accept(((double) pageNumber / pageCount));
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            setProgress.accept(-1D);
+            setProgress.accept(-2D);
+            System.out.println("Finished Downloading Chapter:" + chapterName);
         }
     }
 

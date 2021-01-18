@@ -177,10 +177,8 @@ public class App extends Application {
 
     private void downloadChapter(Chapter selectedChapter) {
         Consumer<Double> myConsumer = progress -> {
-            if (progress != -1) {
-                Platform.runLater(() -> progressBar.setProgress(progress));
-            }
-            if (progress == 1) {
+            Platform.runLater(() -> progressBar.setProgress(progress));
+            if (progress == -2) {
                 Platform.runLater(() -> progressBar.setVisible(false));
             }
         };

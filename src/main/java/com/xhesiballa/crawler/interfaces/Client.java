@@ -2,6 +2,7 @@ package com.xhesiballa.crawler.interfaces;
 
 import com.xhesiballa.crawler.model.Chapter;
 import com.xhesiballa.crawler.model.Manga;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -24,11 +25,13 @@ public interface Client {
     void getChapter(Chapter chapter, Consumer<Double> setProgress);
 
     default Document getPageContent(String pageURL) throws IOException {
-        return Jsoup.connect(pageURL)
+         Connection con =  Jsoup.connect(pageURL)
                 .userAgent(USER_AGENT)
                 .header("Accept-Encoding", "gzip, deflate")
                 .maxBodySize(0)
                 .timeout(600000)
-                .get();
+                .ignoreHttpErrors(true);
+         Document document = con.get();
+         return (con.response().statusCode() / 100 == 2) ? document : null;
     }
 }

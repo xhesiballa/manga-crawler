@@ -23,14 +23,14 @@ public class Utils {
 
         try {
             Connection.Response resultImageResponse = Jsoup.connect(imageURL).ignoreContentType(true).execute();
-//    		System.out.println("Downloading img:" + imageURL);
+    		System.out.println("Downloading img:" + imageURL);
             if (Files.exists(Paths.get(fullPath))) {
                 Files.delete(Paths.get(fullPath));
             }
             Files.createDirectories(Paths.get(fullPath).getParent());
 
             Files.copy(resultImageResponse.bodyStream(), Paths.get(fullPath));
-//    	    System.out.println("Saved to:" + fullPath);
+    	    System.out.println("Saved to:" + fullPath);
         } catch (MalformedURLException e) {
             System.out.println("-----Malformed Exception-----");
             e.printStackTrace();
